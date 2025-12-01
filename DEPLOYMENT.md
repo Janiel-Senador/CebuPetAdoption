@@ -120,8 +120,8 @@ docker compose up --build -d
 ### Backend on Railway
 Use Vercel Postgres for simplest setup.
 1. In Vercel dashboard, add the “Vercel Postgres” integration to your project.
-2. Vercel will provision a database and inject env vars including `POSTGRES_PRISMA_URL`.
-3. Prisma datasource is configured to read `POSTGRES_PRISMA_URL` (see `prisma/schema.prisma`).
+2. Vercel will provision a database and inject env vars. If you set a prefix (e.g., `DATABASE_URL`), vars will look like `DATABASE_URL_PRISMA_DATABASE_URL` and `DATABASE_URL_POSTGRES_URL`.
+3. Prisma datasource is configured to read `DATABASE_URL_PRISMA_DATABASE_URL` (see `prisma/schema.prisma`).
 
 ### Frontend on Vercel
 1. Import this repo to Vercel.
