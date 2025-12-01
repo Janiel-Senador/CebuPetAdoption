@@ -120,12 +120,13 @@ docker compose up --build -d
 ### Backend on Railway
 Use Vercel Postgres for simplest setup.
 1. In Vercel dashboard, add the “Vercel Postgres” integration to your project.
-2. Vercel will provision a database and inject the required environment variables automatically.
-3. No manual connection string required; the serverless functions use `@vercel/postgres` and read envs provided by Vercel.
+2. Vercel will provision a database and inject env vars including `POSTGRES_PRISMA_URL`.
+3. Prisma datasource is configured to read `POSTGRES_PRISMA_URL` (see `prisma/schema.prisma`).
 
 ### Frontend on Vercel
 1. Import this repo to Vercel.
-2. Deploy; `/api/*` is implemented as serverless functions that connect directly to Vercel Postgres.
+2. Deploy; `/api/*` serverless functions connect via Prisma. The build runs `prisma generate` and `prisma db push`.
+3. Validate connectivity with `GET /api/health`.
 
 ### Alternative: Client-side API base
 If you prefer not to edit `vercel.json`, click the `API` button in the header of the site and paste your Railway API base. It will be validated and saved locally.

@@ -4,8 +4,12 @@ import { inCebu } from './util.js'
 export default async function handler(req, res) {
   await ensureSchema()
   if (req.method === 'GET') {
-    const r = await prisma.listing.findMany()
-    res.status(200).json(r)
+    try {
+      const r = await prisma.listing.findMany()
+      res.status(200).json(r)
+    } catch (e) {
+      res.status(500).json({ error: String(e) })
+    }
     return
   }
   if (req.method === 'POST') {
