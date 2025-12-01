@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cebu Animal Adoption</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-row">
+      <div>
+        <h1>Cebu Animal Adoption</h1>
+        <p>Post animals for adoption, request adoption, and schedule pickups around Cebu, Philippines.</p>
+      </div>
+      <div class="header-actions">
+        <button id="notif-open" class="notif-btn">Notifications <span id="notif-count" class="badge">0</span></button>
+        <button id="api-set" class="notif-btn">API</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <aside class="sidebar">
+      <nav class="tabs">
+        <button data-tab="post" class="tab active">Post Adoption</button>
+        <button data-tab="request" class="tab">Request Adoption</button>
+        <button data-tab="pickup" class="tab">Pickup Request</button>
+        <button data-tab="food" class="tab">Food Request</button>
+        <button data-tab="map" class="tab">Map & Filters</button>
+      </nav>
+
+      <section id="tab-post" class="tab-panel active">
+        <form id="form-post">
+          <div class="field">
+            <label>Animal Type</label>
+            <input type="text" id="post-type" placeholder="e.g., Dog, Cat" required />
+          </div>
+          <div class="field">
+            <label>Name</label>
+            <input type="text" id="post-name" placeholder="Animal name" required />
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea id="post-desc" placeholder="Short description" required></textarea>
+          </div>
+          <div class="field">
+            <label>Image Upload (optional)</label>
+            <input type="file" id="post-file" accept="image/*" />
+            <img id="post-preview" class="img-preview" alt="Preview" style="display:none" />
+          </div>
+          <div class="field">
+            <label>Contact</label>
+            <input type="text" id="post-contact" placeholder="Email or Phone" required />
+          </div>
+          <div class="field">
+            <label>Location</label>
+            <div class="loc-row">
+              <button type="button" id="post-select-loc">Select on Map</button>
+              <span id="post-loc-display" class="loc-display">No location selected</span>
+            </div>
+            <small>Click the map to select a location within Cebu.</small>
+          </div>
+          <button type="submit" class="primary">Publish Listing</button>
+        </form>
+      </section>
+
+      <section id="tab-request" class="tab-panel">
+        <form id="form-request">
+          <div class="field">
+            <label>Choose Listing</label>
+            <select id="req-listing" required></select>
+          </div>
+          <div class="field">
+            <label>Message</label>
+            <textarea id="req-message" placeholder="Why you'd like to adopt" required></textarea>
+          </div>
+          <div class="field">
+            <label>Contact</label>
+            <input type="text" id="req-contact" placeholder="Email or Phone" required />
+          </div>
+          <div class="field">
+            <label>Pickup Location Preference</label>
+            <div class="loc-row">
+              <button type="button" id="req-select-loc">Select on Map</button>
+              <span id="req-loc-display" class="loc-display">No location selected</span>
+            </div>
+          </div>
+          <button type="submit" class="primary">Submit Adoption Request</button>
+        </form>
+      </section>
+
+      <section id="tab-pickup" class="tab-panel">
+        <form id="form-pickup">
+          <div class="field">
+            <label>Related Request</label>
+            <select id="pickup-request" required></select>
+          </div>
+          <div class="field">
+            <label>Preferred Date</label>
+            <input type="date" id="pickup-date" required />
+          </div>
+          <div class="field">
+            <label>Preferred Time</label>
+            <input type="time" id="pickup-time" required />
+          </div>
+          <div class="field">
+            <label>Contact</label>
+            <input type="text" id="pickup-contact" placeholder="Email or Phone" required />
+          </div>
+          <div class="field">
+            <label>Pickup Location</label>
+            <div class="loc-row">
+              <button type="button" id="pickup-select-loc">Select on Map</button>
+              <span id="pickup-loc-display" class="loc-display">No location selected</span>
+            </div>
+          </div>
+          <button type="submit" class="primary">Schedule Pickup</button>
+        </form>
+      </section>
+
+      <section id="tab-food" class="tab-panel">
+        <form id="form-food">
+          <div class="field">
+            <label>Animal</label>
+            <select id="food-animal" required>
+              <option value="Dog">Dog</option>
+              <option value="Cat">Cat</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Food Type</label>
+            <input type="text" id="food-kind" placeholder="e.g., Dry, Wet, Canned" required />
+          </div>
+          <div class="field">
+            <label>Quantity</label>
+            <input type="text" id="food-qty" placeholder="e.g., 5 kg or 10 packs" required />
+          </div>
+          <div class="field">
+            <label>Contact</label>
+            <input type="text" id="food-contact" placeholder="Email or Phone" required />
+          </div>
+          <div class="field">
+            <label>Location</label>
+            <div class="loc-row">
+              <button type="button" id="food-select-loc">Select on Map</button>
+              <span id="food-loc-display" class="loc-display">No location selected</span>
+            </div>
+            <small>Click the map to select a location within Cebu.</small>
+          </div>
+          <button type="submit" class="primary">Submit Food Request</button>
+        </form>
+      </section>
+
+      <section id="tab-map" class="tab-panel">
+        <div class="filters">
+          <label><input type="checkbox" id="filter-listings" checked /> Show Listings</label>
+          <label><input type="checkbox" id="filter-requests" checked /> Show Requests</label>
+          <label><input type="checkbox" id="filter-pickups" checked /> Show Pickups</label>
+          <label><input type="checkbox" id="filter-food" checked /> Show Food Requests</label>
+          <label><input type="checkbox" id="filter-links" checked /> Show Pickup Links</label>
+        </div>
+        <div class="info">
+          <p>Click anywhere on the map to set a location for the active form.</p>
+          <p>Only locations within Cebu are allowed.</p>
+        </div>
+      </section>
+
+      <section id="tab-notif" class="tab-panel">
+        <form id="form-notif">
+          <div class="field">
+            <label>Your contact (email or phone)</label>
+            <input type="text" id="notif-contact" placeholder="Enter the contact you used when posting" required />
+          </div>
+          <button type="submit" class="primary">Load Notifications</button>
+        </form>
+        <div id="notif-list" class="notif-list"></div>
+      </section>
+    </aside>
+
+    <section class="map-wrap">
+      <div id="map"></div>
+    </section>
+  </main>
+
+  <footer>
+    <small>Data is stored locally in your browser. Built with OpenStreetMap.</small>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

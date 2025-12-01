@@ -1,0 +1,43 @@
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: #222; }
+header { padding: 16px 20px; border-bottom: 1px solid #e5e5e5; }
+header h1 { margin: 0 0 4px; font-size: 20px; }
+header p { margin: 0; color: #555; }
+.header-row { display: flex; justify-content: space-between; align-items: center; }
+.notif-btn { padding: 8px 10px; border: 1px solid #ddd; border-radius: 999px; background: white; cursor: pointer; }
+.badge { background: #ef4444; color: white; border-radius: 999px; padding: 2px 8px; margin-left: 6px; font-size: 12px; }
+.header-actions { display: flex; gap: 8px; align-items: center; }
+
+main { display: grid; grid-template-columns: 360px 1fr; height: calc(100% - 92px); }
+.sidebar { border-right: 1px solid #e5e5e5; overflow: auto; padding-bottom: 16px; }
+.map-wrap { height: 100%; }
+#map { height: 100%; width: 100%; }
+
+.tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 8px; border-bottom: 1px solid #eee; }
+.tab { padding: 8px; background: #f7f7f7; border: 1px solid #e5e5e5; border-radius: 6px; cursor: pointer; }
+.tab.active { background: #0ea5e9; color: white; border-color: #0ea5e9; }
+
+.tab-panel { display: none; padding: 12px 12px 4px; }
+.tab-panel.active { display: block; }
+
+form { display: grid; gap: 10px; }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 600; font-size: 13px; }
+.field input, .field textarea, .field select { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+.field small { color: #666; }
+.loc-row { display: flex; align-items: center; gap: 8px; }
+.loc-display { font-size: 12px; color: #444; }
+
+button.primary { padding: 10px 12px; border: none; border-radius: 6px; background: #16a34a; color: white; font-weight: 600; cursor: pointer; }
+button.primary:hover { background: #15803d; }
+button { padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; }
+
+.filters { padding: 8px; display: grid; gap: 4px; border: 1px solid #eee; border-radius: 8px; background: #fafafa; }
+.info { padding: 8px; color: #555; }
+.notif-list { margin-top: 12px; display: grid; gap: 8px; }
+.notif-item { border: 1px solid #eee; border-radius: 8px; padding: 10px; }
+.notif-item.read { opacity: 0.6; }
+
+footer { padding: 10px 20px; border-top: 1px solid #e5e5e5; font-size: 12px; color: #666; }
+.img-preview { max-width: 100%; max-height: 160px; border: 1px solid #eee; border-radius: 6px; }

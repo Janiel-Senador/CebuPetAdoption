@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: adoption_api
+    volumes:
+      - dbdata:/data
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-sqlite:////data/data.db}
+  web:
+    image: nginx:1.25
+    container_name: adoption_web
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./styles.css:/usr/share/nginx/html/styles.css:ro
+      - ./app.js:/usr/share/nginx/html/app.js:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+    restart: unless-stopped
+volumes:
+  dbdata:
+    driver: local

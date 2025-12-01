@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.env
+venv/
+
+# Node/Serverless
+node_modules/
+.vercel/
+.next/
+
+# OS
+.DS_Store
+
+# Local data
+data.db
+dbdata/
+
+# Docker
+*.log
