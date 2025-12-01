@@ -1,10 +1,10 @@
-import { pool, ensureSchema } from './db.js'
+import { sql, ensureSchema } from './db.js'
 import { inCebu } from './util.js'
 
 export default async function handler(req, res) {
   await ensureSchema()
   if (req.method === 'GET') {
-    const r = await pool.query('SELECT * FROM food_requests')
+    const r = await sql`SELECT * FROM food_requests`
     res.status(200).json(r.rows)
     return
   }
@@ -14,8 +14,7 @@ export default async function handler(req, res) {
       const { id = uid(), animal, kind, qty, contact, location } = data
       const lat = Number(location?.lat), lng = Number(location?.lng)
       if (!inCebu(lat, lng)) { res.status(400).json({ error: 'Location must be within Cebu' }); return }
-      await pool.query('INSERT INTO food_requests (id,animal,kind,qty,contact,lat,lng,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
-        [id, animal, kind, qty, contact, lat, lng, new Date().toISOString()])
+      await sql`INSERT INTO food_requests (id,animal,kind,qty,contact,lat,lng,created_at) VALUES (${id},${animal},${kind},${qty},${contact},${lat},${lng},${new Date().toISOString()})`
       res.status(200).json({ id })
     } catch (e) { res.status(500).json({ error: String(e) }) }
     return

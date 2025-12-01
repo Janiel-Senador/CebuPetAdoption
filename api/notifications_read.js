@@ -1,4 +1,4 @@
-import { pool, ensureSchema } from './db.js'
+import { sql, ensureSchema } from './db.js'
 
 export default async function handler(req, res) {
   await ensureSchema()
@@ -7,7 +7,7 @@ export default async function handler(req, res) {
       const data = req.body || await readJson(req)
       const ids = Array.isArray(data.ids) ? data.ids : []
       for (const id of ids) {
-        await pool.query('UPDATE notifications SET read=1 WHERE id=$1', [id])
+        await sql`UPDATE notifications SET read=1 WHERE id=${id}`
       }
       res.status(200).json({ updated: ids.length })
     } catch (e) { res.status(500).json({ error: String(e) }) }
