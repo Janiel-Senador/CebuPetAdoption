@@ -16,7 +16,7 @@ const data = {
   notifications: [],
 }
 
-const API = localStorage.getItem('API_BASE') || ((location.hostname === 'localhost' && location.port === '8000') ? 'http://127.0.0.1:5000' : '/api')
+const API = localStorage.getItem('API_BASE') || '/api'
 
 async function apiGet(path) {
   const r = await fetch(`${API}${path}`)

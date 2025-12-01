@@ -118,19 +118,17 @@ docker compose up --build -d
 
 ## Railway + Vercel (recommended free-friendly)
 ### Backend on Railway
-1. Create a new Railway project.
-2. Add a PostgreSQL plugin (Railway-managed Postgres). Copy its connection string.
-3. Add a new service from repo, set the start command using `Procfile` (auto-detected):
-   `web: gunicorn server:app --bind 0.0.0.0:$PORT`
-4. Set an environment variable `DATABASE_URL` to the Postgres connection string.
-5. Deploy; note the Railway service public URL (e.g., `https://your-service.up.railway.app`).
+Use Railway only for the database. No API service needed anymore.
+1. Create a Railway project and add PostgreSQL.
+2. Get the PUBLIC Postgres connection string (not the internal `postgres.railway.internal`).
+3. In Vercel, set `DATABASE_URL` to that public Postgres URI.
 
 ### Frontend on Vercel
 1. Import this repo to Vercel.
 2. Set an Environment Variable in Vercel Project Settings:
-   - Key: `RAILWAY_API_URL`
-   - Value: `https://<your-service>.up.railway.app`
-3. Deploy; `/api/*` calls are handled by a serverless function that proxies to `RAILWAY_API_URL`.
+   - Key: `DATABASE_URL`
+   - Value: your Railway Postgres public connection string
+3. Deploy; `/api/*` is implemented as serverless functions that connect directly to Postgres.
 
 ### Alternative: Client-side API base
 If you prefer not to edit `vercel.json`, click the `API` button in the header of the site and paste your Railway API base. It will be validated and saved locally.
