@@ -24,6 +24,11 @@ async function apiGet(path) {
 }
 async function apiPost(path, body) {
   const r = await fetch(`${API}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  if (!r.ok) {
+    let msg = 'Request failed'
+    try { const j = await r.json(); msg = j.error || JSON.stringify(j) } catch {}
+    throw new Error(msg)
+  }
   return r.json()
 }
 
@@ -256,9 +261,14 @@ document.getElementById('form-post').addEventListener('submit', async (e) => {
   let imgData = ''
   if (file) { try { imgData = await readFileAsDataURL(file) } catch {} }
   const payload = { type, name, desc, img: imgData, contact, location: sel }
-  const res = await apiPost('/listings', payload)
-  const item = { id: res.id, ...payload }
-  data.listings.push(item)
+  try {
+    const res = await apiPost('/listings', payload)
+    const item = { id: res.id, ...payload }
+    data.listings.push(item)
+  } catch (err) {
+    alert(`Publish failed: ${err.message}`)
+    return
+  }
   renderAll()
   e.target.reset()
   document.getElementById('post-loc-display').textContent = 'No location selected'
@@ -277,9 +287,14 @@ document.getElementById('form-request').addEventListener('submit', async (e) => 
   const sel = tempSelectionMarker.req?.latlng
   if (!sel) { alert('Select a location on the map within Cebu.') ; return }
   const payload = { listingId, message, contact, location: sel }
-  const res = await apiPost('/requests', payload)
-  const item = { id: res.id, listingId, listingName: `${listing.type} • ${listing.name}`, message, contact, location: sel }
-  data.requests.push(item)
+  try {
+    const res = await apiPost('/requests', payload)
+    const item = { id: res.id, listingId, listingName: `${listing.type} • ${listing.name}`, message, contact, location: sel }
+    data.requests.push(item)
+  } catch (err) {
+    alert(`Request failed: ${err.message}`)
+    return
+  }
   renderAll()
   e.target.reset()
   document.getElementById('req-loc-display').textContent = 'No location selected'
@@ -297,9 +312,14 @@ document.getElementById('form-food').addEventListener('submit', async (e) => {
   const sel = tempSelectionMarker.food?.latlng
   if (!sel) { alert('Select a location on the map within Cebu.') ; return }
   const payload = { animal, kind, qty, contact, location: sel }
-  const res = await apiPost('/food_requests', payload)
-  const item = { id: res.id, ...payload }
-  data.foodRequests.push(item)
+  try {
+    const res = await apiPost('/food_requests', payload)
+    const item = { id: res.id, ...payload }
+    data.foodRequests.push(item)
+  } catch (err) {
+    alert(`Food request failed: ${err.message}`)
+    return
+  }
   renderAll()
   e.target.reset()
   document.getElementById('food-loc-display').textContent = 'No location selected'
@@ -318,9 +338,14 @@ document.getElementById('form-pickup').addEventListener('submit', async (e) => {
   const sel = tempSelectionMarker.pickup?.latlng
   if (!sel) { alert('Select a pickup location on the map within Cebu.') ; return }
   const payload = { requestId: reqId, date, time, contact, location: sel }
-  const res = await apiPost('/pickups', payload)
-  const item = { id: res.id, requestId: reqId, requestTitle: req.listingName, date, time, contact, location: sel }
-  data.pickups.push(item)
+  try {
+    const res = await apiPost('/pickups', payload)
+    const item = { id: res.id, requestId: reqId, requestTitle: req.listingName, date, time, contact, location: sel }
+    data.pickups.push(item)
+  } catch (err) {
+    alert(`Pickup scheduling failed: ${err.message}`)
+    return
+  }
   renderAll()
   e.target.reset()
   document.getElementById('pickup-loc-display').textContent = 'No location selected'
