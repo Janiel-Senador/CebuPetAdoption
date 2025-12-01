@@ -1,11 +1,11 @@
-import { sql, ensureSchema } from './db.js'
+import { prisma, ensureSchema } from './db.js'
 import { inCebu } from './util.js'
 
 export default async function handler(req, res) {
   await ensureSchema()
   if (req.method === 'GET') {
-    const r = await sql`SELECT * FROM listings`
-    res.status(200).json(r.rows)
+    const r = await prisma.listing.findMany()
+    res.status(200).json(r)
     return
   }
   if (req.method === 'POST') {
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       const { id = uid(), type, name, desc = '', img = '', contact, location } = data
       const lat = Number(location?.lat), lng = Number(location?.lng)
       if (!inCebu(lat, lng)) { res.status(400).json({ error: 'Location must be within Cebu' }); return }
-      await sql`INSERT INTO listings (id,type,name,desc,img,contact,lat,lng,created_at) VALUES (${id},${type},${name},${desc},${img},${contact},${lat},${lng},${new Date().toISOString()})`
+      await prisma.listing.create({ data: { id, type, name, desc, img, contact, lat, lng } })
       res.status(200).json({ id })
     } catch (e) { res.status(500).json({ error: String(e) }) }
     return

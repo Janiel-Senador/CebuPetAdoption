@@ -7,6 +7,13 @@
     "node": "24.x"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.6.0"
+    "@prisma/client": "^5.15.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.15.0"
+  },
+  "scripts": {
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push"
   }
 }

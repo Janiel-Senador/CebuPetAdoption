@@ -1,5 +1,6 @@
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  ],
+  "buildCommand": "npm ci && npm run prisma:generate && npm run prisma:push"
 }

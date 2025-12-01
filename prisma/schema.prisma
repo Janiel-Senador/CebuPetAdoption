@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Listing {
+  id        String   @id
+  type      String
+  name      String
+  desc      String?
+  img       String?
+  contact   String
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now())
+}
+
+model Request {
+  id         String   @id
+  listingId  String
+  message    String
+  contact    String
+  lat        Float
+  lng        Float
+  createdAt  DateTime @default(now())
+}
+
+model Pickup {
+  id         String   @id
+  requestId  String
+  date       String
+  time       String
+  contact    String
+  lat        Float
+  lng        Float
+  createdAt  DateTime @default(now())
+}
+
+model FoodRequest {
+  id         String   @id
+  animal     String
+  kind       String
+  qty        String
+  contact    String
+  lat        Float
+  lng        Float
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id          String   @id
+  userContact String
+  message     String
+  createdAt   DateTime @default(now())
+  read        Int      @default(0)
+}

@@ -1,11 +1,11 @@
-import { sql, ensureSchema } from './db.js'
+import { prisma, ensureSchema } from './db.js'
 import { inCebu } from './util.js'
 
 export default async function handler(req, res) {
   await ensureSchema()
   if (req.method === 'GET') {
-    const r = await sql`SELECT * FROM requests`
-    res.status(200).json(r.rows)
+    const r = await prisma.request.findMany()
+    res.status(200).json(r)
     return
   }
   if (req.method === 'POST') {
@@ -14,12 +14,11 @@ export default async function handler(req, res) {
       const { id = uid(), listingId, message, contact, location } = data
       const lat = Number(location?.lat), lng = Number(location?.lng)
       if (!inCebu(lat, lng)) { res.status(400).json({ error: 'Location must be within Cebu' }); return }
-      await sql`INSERT INTO requests (id,listing_id,message,contact,lat,lng,created_at) VALUES (${id},${listingId},${message},${contact},${lat},${lng},${new Date().toISOString()})`
-      const ow = await sql`SELECT contact, type, name FROM listings WHERE id=${listingId}`
-      if (ow.rows[0]) {
-        const owner_contact = ow.rows[0].contact, ltype = ow.rows[0].type, lname = ow.rows[0].name
-        const msg = `New adoption request for ${ltype} • ${lname} from ${contact}`
-        await sql`INSERT INTO notifications (id, user_contact, message, created_at, read) VALUES (${uid()}, ${owner_contact}, ${msg}, ${new Date().toISOString()}, 0)`
+      await prisma.request.create({ data: { id, listingId, message, contact, lat, lng } })
+      const ow = await prisma.listing.findUnique({ where: { id: listingId } })
+      if (ow) {
+        const msg = `New adoption request for ${ow.type} • ${ow.name} from ${contact}`
+        await prisma.notification.create({ data: { id: uid(), userContact: ow.contact, message: msg } })
       }
       res.status(200).json({ id })
     } catch (e) { res.status(500).json({ error: String(e) }) }

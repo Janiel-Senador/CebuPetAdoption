@@ -1,4 +1,4 @@
-import { sql, ensureSchema } from './db.js'
+import { prisma, ensureSchema } from './db.js'
 
 export default async function handler(req, res) {
   await ensureSchema()
@@ -6,9 +6,7 @@ export default async function handler(req, res) {
     try {
       const data = req.body || await readJson(req)
       const ids = Array.isArray(data.ids) ? data.ids : []
-      for (const id of ids) {
-        await sql`UPDATE notifications SET read=1 WHERE id=${id}`
-      }
+      await prisma.notification.updateMany({ where: { id: { in: ids } }, data: { read: 1 } })
       res.status(200).json({ updated: ids.length })
     } catch (e) { res.status(500).json({ error: String(e) }) }
     return
